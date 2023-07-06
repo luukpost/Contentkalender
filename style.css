@@ -1,0 +1,46 @@
+/* Styling for the menu */
+#menu {
+    position: relative;
+    display: inline-block;
+  }
+  
+  #menu-settings {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    cursor: pointer;
+  }
+  
+  #menu-popup {
+    display: none;
+    position: absolute;
+    top: 30px;
+    left: 10px;
+    background-color: #ffffff;
+    border: 1px solid #e2e2e2;
+    padding: 10px;
+    width: 200px;
+  }
+  
+  #menu-popup ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  #menu-popup li {
+    margin-bottom: 10px;
+  }
+  
+  #menu-popup li label {
+    display: block;
+  }
+  
+  #menu-popup li label input[type="checkbox"] {
+    margin-right: 5px;
+  }
+  
+  #menu-popup li label.crossed {
+    text-decoration: line-through;
+    color: #cccccc;
+  }
+  

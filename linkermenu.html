@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Menu Example</title>
+  <style>
+    html, body {
+      height: 100%;
+    }
+
+    /* Styling for the menu */
+    .container {
+      height: 100%;
+      width: 25%;
+      background-color: #21E3B8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #menu {
+      background-color: #ffffff;
+      font-family: Rubik, sans-serif;
+      color: #7f7f7f;
+      padding: 0.8125rem 1rem;
+      border: 5px solid #21E3B8;
+      border-radius: 0.25rem;
+      width: 200px;
+    }
+
+    #menu-popup {
+      display: none;
+      position: static;
+      top: 2px;
+      left: 2px;
+      background-color: #ffffff;
+      border: 1px solid #e2e2e2;
+      padding: 10px;
+    }
+
+    #menu-popup ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    #menu-popup li {
+      margin-bottom: 10px;
+    }
+
+    #menu-popup li label {
+      display: block;
+    }
+
+    #menu-popup li label input[type="checkbox"] {
+      margin-right: 5px;
+    }
+
+    #menu-popup li label.crossed {
+      text-decoration: line-through;
+      color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    #settings-icon {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    #menu-list {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    #menu-list li {
+      margin-bottom: 10px;
+      text-decoration: none;
+      color: #7f7f7f;
+      transition: background-color 0.3s;
+      cursor: pointer;
+    }
+
+    #menu-list li.crossed {
+      text-decoration: line-through;
+      color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    #menu-list li.placeholder {
+      background-color: #e2e2e2;
+      height: 2px;
+      margin-bottom: 20px;
+    }
+
+    #actief {
+      color: #21E3B8;
+      font-size: larger;
+      display: inline;
+      padding: 0px 0px 0px 20px;
+    }
+
+    .inactive {
+      color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    /* Tooltip styles */
+    .tooltip {
+      position: absolute;
+      background-color: #000000;
+      color: #ffffff;
+      padding: 5px;
+      font-size: 12px;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 1;
+      width: 10%;
+    }
+
+    .tooltip.active {
+      visibility: visible;
+      opacity: 1;
+    }
+  </style>
+  <script>
+    // JavaScript code
+    window.addEventListener("DOMContentLoaded", function () {
+      const menu = document.getElementById("menu");
+      const menuPopup = document.getElementById("menu-popup");
+      const menuList = document.getElementById("menu-list");
+      const placeholder = document.createElement("li");
+      placeholder.classList.add("placeholder");
+
+      const checkboxes = document.querySelectorAll("#menu-popup input[type='checkbox']");
+
+      checkboxes.forEach(function (checkbox) {
+        checkbox.addEventListener("change", function () {
+          const label = checkbox.parentNode;
+          const text = label.textContent.trim();
+          const menuItem = document.querySelector(`#menu-list li[data-text="${text}"]`);
+
+          if (checkbox.checked) {
+            menuItem.classList.remove("crossed");
+            menuItem.classList.remove("inactive");
+          } else {
+            menuItem.classList.add("crossed");
+            menuItem.classList.add("inactive");
+          }
+        });
+      });
+
+      let dragItem = null;
+
+      function dragStart() {
+        dragItem = this;
+        this.style.opacity = "0.4";
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/html", this.innerHTML);
+      }
+
+      function dragOver(e) {
+        e.preventDefault();
+        this.classList.add("drag-over");
+        menuList.insertBefore(placeholder, this);
+      }
+
+      function dragLeave(e) {
+        this.classList.remove("drag-over");
+      }
+
+      function dragDrop(e) {
+        e.preventDefault();
+        this.classList.remove("drag-over");
+
+        const listItem = document.createElement("li");
+        listItem.classList.add("dragged");
+        listItem.innerHTML = e.dataTransfer.getData("text/html");
+
+        if (dragItem !== this) {
+          menuList.insertBefore(listItem, placeholder);
+        }
+
+        menuList.removeChild(placeholder);
+      }
+
+      function dragEnd() {
+        this.style.opacity = "1";
+        menuList.removeChild(placeholder);
+        dragItem = null;
+      }
+
+      menuList.addEventListener("dragstart", dragStart);
+      menuList.addEventListener("dragover", dragOver);
+      menuList.addEventListener("dragleave", dragLeave);
+      menuList.addEventListener("drop", dragDrop);
+      menuList.addEventListener("dragend", dragEnd);
+
+      const menuItems = document.querySelectorAll("#menu-list li");
+      const actief = document.getElementById("actief");
+
+      menuItems.forEach(function (item) {
+        item.addEventListener("click", function () {
+          if (!item.classList.contains("crossed")) {
+            actief.textContent = item.textContent;
+          }
+        });
+
+        item.addEventListener("mouseover", function () {
+          if (item.classList.contains("crossed")) {
+            const tooltip = document.createElement("div");
+            tooltip.textContent = "Dit element is niet actief, klik op het icoontje linksboven om deze te activeren";
+            tooltip.classList.add("tooltip");
+            item.appendChild(tooltip);
+            tooltip.classList.add("active");
+          }
+        });
+
+        item.addEventListener("mouseout", function () {
+          if (item.classList.contains("crossed")) {
+            const tooltip = item.querySelector(".tooltip");
+            tooltip.classList.remove("active");
+            item.removeChild(tooltip);
+          }
+        });
+      });
+
+      const settingsIcon = document.getElementById("settings-icon");
+
+      settingsIcon.addEventListener("click", function () {
+        menuPopup.style.display = menuPopup.style.display === "none" ? "block" : "none";
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div id="menu">
+      <span><img id="settings-icon" src="settings_icon.png"></span>
+      <p id="actief">Projecten</p>
+      <div id="menu-popup">
+        <ul>
+          <li>
+            <label><input type="checkbox" checked> Projecten </label>
+          </li>
+          <li>
+            <label><input type="checkbox" checked> Mediakanalen </label>
+          </li>
+          <li>
+            <label><input type="checkbox" checked> Contenttypen </label>
+          </li>
+          <li>
+            <label><input type="checkbox" checked> Doelgroepen </label>
+          </li>
+          <li>
+            <label><input type="checkbox" checked> Doelstellingen </label>
+          </li>
+          <li>
+            <label><input type="checkbox" checked> Labels </label>
+          </li>
+        </ul>
+      </div>
+
+      <ul id="menu-list">
+        <li draggable="true" data-text="Projecten">Projecten</li>
+        <hr>
+        <li draggable="true" data-text="Mediakanalen">Mediakanalen</li>
+        <li draggable="true" data-text="Contenttypen">Contenttypen</li>
+        <hr>
+        <li draggable="true" data-text="Doelgroepen">Doelgroepen</li>
+        <li draggable="true" data-text="Doelstellingen">Doelstellingen</li>
+        <hr>
+        <li draggable="true" data-text="Labels">Labels</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
