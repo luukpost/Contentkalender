@@ -25,16 +25,19 @@
       border: 5px solid #21E3B8;
       border-radius: 0.25rem;
       width: 200px;
+      position: relative;
     }
 
     #menu-popup {
       display: none;
-      position: static;
-      top: 2px;
-      left: 2px;
+      position: absolute;
+      top: 15%;
+      left: 0;
       background-color: #ffffff;
       border: 1px solid #e2e2e2;
       padding: 10px;
+      width: 200px;
+      z-index: 1;
     }
 
     #menu-popup ul {
@@ -115,7 +118,7 @@
       opacity: 0;
       transition: opacity 0.3s;
       z-index: 1;
-      width: 10%;
+      width: 100%;
     }
 
     .tooltip.active {
@@ -150,52 +153,6 @@
         });
       });
 
-      let dragItem = null;
-
-      function dragStart() {
-        dragItem = this;
-        this.style.opacity = "0.4";
-        e.dataTransfer.effectAllowed = "move";
-        e.dataTransfer.setData("text/html", this.innerHTML);
-      }
-
-      function dragOver(e) {
-        e.preventDefault();
-        this.classList.add("drag-over");
-        menuList.insertBefore(placeholder, this);
-      }
-
-      function dragLeave(e) {
-        this.classList.remove("drag-over");
-      }
-
-      function dragDrop(e) {
-        e.preventDefault();
-        this.classList.remove("drag-over");
-
-        const listItem = document.createElement("li");
-        listItem.classList.add("dragged");
-        listItem.innerHTML = e.dataTransfer.getData("text/html");
-
-        if (dragItem !== this) {
-          menuList.insertBefore(listItem, placeholder);
-        }
-
-        menuList.removeChild(placeholder);
-      }
-
-      function dragEnd() {
-        this.style.opacity = "1";
-        menuList.removeChild(placeholder);
-        dragItem = null;
-      }
-
-      menuList.addEventListener("dragstart", dragStart);
-      menuList.addEventListener("dragover", dragOver);
-      menuList.addEventListener("dragleave", dragLeave);
-      menuList.addEventListener("drop", dragDrop);
-      menuList.addEventListener("dragend", dragEnd);
-
       const menuItems = document.querySelectorAll("#menu-list li");
       const actief = document.getElementById("actief");
 
@@ -228,7 +185,11 @@
       const settingsIcon = document.getElementById("settings-icon");
 
       settingsIcon.addEventListener("click", function () {
-        menuPopup.style.display = menuPopup.style.display === "none" ? "block" : "none";
+        if (menuPopup.style.display === "block") {
+          menuPopup.style.display = "none";
+        } else {
+          menuPopup.style.display = "block";
+        }
       });
     });
   </script>
@@ -262,15 +223,15 @@
       </div>
 
       <ul id="menu-list">
-        <li draggable="true" data-text="Projecten">Projecten</li>
+        <li data-text="Projecten">Projecten</li>
         <hr>
-        <li draggable="true" data-text="Mediakanalen">Mediakanalen</li>
-        <li draggable="true" data-text="Contenttypen">Contenttypen</li>
+        <li data-text="Mediakanalen">Mediakanalen</li>
+        <li data-text="Contenttypen">Contenttypen</li>
         <hr>
-        <li draggable="true" data-text="Doelgroepen">Doelgroepen</li>
-        <li draggable="true" data-text="Doelstellingen">Doelstellingen</li>
+        <li data-text="Doelgroepen">Doelgroepen</li>
+        <li data-text="Doelstellingen">Doelstellingen</li>
         <hr>
-        <li draggable="true" data-text="Labels">Labels</li>
+        <li data-text="Labels">Labels</li>
       </ul>
     </div>
   </div>
